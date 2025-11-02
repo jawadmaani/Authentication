@@ -11,12 +11,12 @@ namespace Authentication.Service;
 public class UserService
 {
     private readonly IUserRepository _repository;
-    private readonly PasswordEncoder _passwordEncoder;
+    private readonly PasswordHasher _passwordHasher;
     
-    public UserService(IUserRepository repository, PasswordEncoder passwordEncoder)
+    public UserService(IUserRepository repository, PasswordHasher passwordHasher)
     {
         _repository = repository;
-        _passwordEncoder = passwordEncoder;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<List<UserResponseDto>>GetAllUsersAsync()
@@ -55,7 +55,8 @@ public class UserService
         {
             Name = userRequestDto.Username,
             Email = userRequestDto.Email,
-            PasswordHash = _passwordEncoder.HashPassword(userRequestDto.Password)
+            PasswordHash = _passwordHasher.HashPassword(userRequestDto.Password),
+            Role = "User"
         };
        await _repository.CreateAsync(user);
        await _repository.SaveAsync();
@@ -63,13 +64,13 @@ public class UserService
         return UserMapper.ToUserResponseDto(user);
     }
 
-    public async Task<int> LoginAsync(UserRequestDto userRequestDto)
+    public async Task<(int userId, string role)> LoginAsync(UserRequestDto userRequestDto)
     {
         var user = await _repository.GetByUserNameAsync(userRequestDto.Username);
         if (user == null)
             throw new InvalidCredentialsException("Invalid username or password");
     
-        bool passwordMatch = _passwordEncoder.VerifyPassword(
+        bool passwordMatch = _passwordHasher.VerifyPassword(
             user.PasswordHash, 
             userRequestDto.Password
         );
@@ -77,7 +78,7 @@ public class UserService
         if (!passwordMatch)
             throw new InvalidCredentialsException("Invalid username or password");
 
-        return user.Id;
+        return (user.Id, user.Role);
         
     }
     

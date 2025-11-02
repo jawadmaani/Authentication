@@ -2,7 +2,7 @@
 
 namespace Authentication.Security
 {
-    public class PasswordEncoder
+    public class PasswordHasher
     {
         private readonly PasswordHasher<object> _hasher = new();
 

@@ -82,7 +82,7 @@ public class RefreshTokenService
         await _refreshTokenRepository.SaveAsync();
     }
     
-    public async Task<string> RotateRefreshTokenAsync(string oldPlainToken)
+    public async Task<(string newToken, int userId)> RotateRefreshTokenAsync(string oldPlainToken)
     {
         await using var transaction = await _transactionRepository.BeginTransactionAsync();
         try
@@ -91,19 +91,17 @@ public class RefreshTokenService
 
             storedToken.RevokedAt = DateTime.UtcNow;
             var newPlainToken = await CreateRefreshTokenAsync(storedToken.UserId, saveChanges: false);
-           
-            
+       
             await _refreshTokenRepository.SaveAsync();
             await _transactionRepository.CommitTransactionAsync();
-            return newPlainToken;
+        
+            return (newPlainToken, storedToken.UserId); 
         }
         catch
         {
             await _transactionRepository.RollbackTransactionAsync();
             throw;
         }
-    
-
     }
 }
 

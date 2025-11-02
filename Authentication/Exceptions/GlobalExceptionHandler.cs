@@ -1,6 +1,8 @@
 ﻿using Authentication.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Report_System_Backend.middleware.AccessTokenExceptions;
+using Report_System_Backend.middleware.RefreshTokenExceptions;
 
 namespace Report_System_Backend.middleware;
 
@@ -21,6 +23,21 @@ public class GlobalExceptionHandler : ControllerBase
 
         if (context?.Error is UserAlreadyExistsException)
             return Conflict(new { message = context.Error.Message });
+        
+        if (context?.Error is RefreshTokenExpiredException)
+            return Unauthorized(new { message = context.Error.Message });
+        
+        if (context?.Error is RefreshTokenNotFoundException)
+            return Unauthorized(new { message = context.Error.Message });
+        
+        if (context?.Error is RefreshTokenRevokedException)
+            return Unauthorized(new { message = context.Error.Message });
+        
+        if (context?.Error is InvalidTokenException)
+            return Unauthorized(new { message = context.Error.Message });
+        
+        if (context?.Error is MissingAuthorizationHeaderException)
+            return Unauthorized(new { message = context.Error.Message });
 
         return Problem(detail: context?.Error.Message, statusCode: 500);
     }

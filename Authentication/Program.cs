@@ -17,6 +17,10 @@ if (string.IsNullOrWhiteSpace(refreshSecret))
     throw new InvalidOperationException("REFRESH_TOKEN_SECRET is not set in the environment.");
 }
 
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings")
+);
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
@@ -28,10 +32,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<RefreshTokenService>();
+builder.Services.AddScoped<AccessTokenService>();
+builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ITransactionRepository,TransactionRepository>();
-builder.Services.AddScoped<PasswordEncoder>();
-builder.Services.AddSingleton(new TokenHasher(refreshSecret));
+builder.Services.AddScoped<PasswordHasher>();
+builder.Services.AddScoped<ITokenHashStrategy, HmacSha512HashStrategy>();
+builder.Services.AddSingleton(new TokenHasher(refreshSecret, new HmacSha512HashStrategy()));
 
 
 builder.Services.AddOpenApi();
@@ -50,24 +57,19 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-
-
-
-
-
-
-
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseRouting();
-app.UseRateLimiter();
-app.MapControllers().RequireRateLimiting("auth-limit");
 app.UseExceptionHandler("/error");
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();     
+app.UseRouting();                 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<AccessTokenMiddleware>(); 
+app.UseRateLimiter();         
 app.MapControllers();
 
 

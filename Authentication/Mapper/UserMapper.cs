@@ -10,6 +10,7 @@ public class UserMapper
         return new UserResponseDto
         {
             UserName = user.Name,
+            Role=user.Role,
             Email = user.Email
         };
     }

@@ -1,5 +1,7 @@
 ﻿using Authentication.Dto;
+using Authentication.Security;
 using Authentication.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Authentication;
@@ -14,6 +16,7 @@ public class UserController:ControllerBase
         _userService = service;
     }
 
+    [RequireRole("Admin")] 
     [HttpGet]
     public async Task<ActionResult<List<UserResponseDto>>> GetAllUsers()
     {
@@ -21,6 +24,7 @@ public class UserController:ControllerBase
         return Ok(users);
     }
 
+    [RequireRole("Admin")] 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserResponseDto>> GetUserById([FromRoute] int id)
     {

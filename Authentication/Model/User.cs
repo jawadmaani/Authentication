@@ -13,6 +13,9 @@ public class User
     [MaxLength(100)]
     [EmailAddress]
     public string Email {get;set;}
+        
+    public string Role { get; set; } = "User";
+
     [Required]
     public string PasswordHash {get;set;}
     public DateTime CreatedAt {get;set;} = DateTime.UtcNow;
