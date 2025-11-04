@@ -1,4 +1,7 @@
-﻿public static class CookieHelper
+﻿
+namespace Authentication.Security;
+
+public static class CookieHelper
 {
     public static void SetRefreshTokenCookie(HttpResponse response, string token)
     {

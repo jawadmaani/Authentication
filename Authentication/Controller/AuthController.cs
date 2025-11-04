@@ -46,7 +46,6 @@ public class AuthController : ControllerBase
         var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(user.userId);
         CookieHelper.SetRefreshTokenCookie(Response, refreshToken);
 
-
         return Ok(new AuthResponseDto
         {
             Message = "Login successful",

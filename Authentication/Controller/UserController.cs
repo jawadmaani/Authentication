@@ -1,5 +1,5 @@
 ﻿using Authentication.Dto;
-using Authentication.Security;
+using Authentication.Middleware;
 using Authentication.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

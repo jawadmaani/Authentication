@@ -1,7 +1,8 @@
 ﻿using Authentication.Dto;
 using Authentication.Security;
-using Authentication.Service;
 using Microsoft.Extensions.Options;
+
+namespace Authentication.Service;
 
 public class AccessTokenService
 {

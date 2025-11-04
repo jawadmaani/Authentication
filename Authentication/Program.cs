@@ -6,6 +6,7 @@ using Authentication.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using  Authentication.Middleware;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ if (string.IsNullOrWhiteSpace(refreshSecret))
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings")
 );
-
+ 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(

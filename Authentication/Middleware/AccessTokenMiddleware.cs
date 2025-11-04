@@ -1,6 +1,9 @@
 ﻿using System.Security.Claims;
+using Authentication.Service;
 using Microsoft.AspNetCore.Authorization;
 using Report_System_Backend.middleware.AccessTokenExceptions;
+
+namespace Authentication.Middleware;
 
 public class AccessTokenMiddleware
 {

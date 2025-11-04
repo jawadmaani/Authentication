@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 
-namespace Authentication.Security;
+namespace Authentication.Middleware;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class RequireRoleAttribute : Attribute, IAuthorizationFilter
@@ -33,7 +33,6 @@ public class RequireRoleAttribute : Attribute, IAuthorizationFilter
                 {
                     StatusCode = 403
                 };
-                return;
             }
         }
     }
